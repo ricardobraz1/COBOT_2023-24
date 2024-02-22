@@ -3,8 +3,8 @@ import os
 
 # código para buscar os arquivos no diretório
 
-# print("Diretório de trabalho atual:", os.getcwd())                   # Verifica o diretório de trabalho atual
-# print("Arquivos na pasta:", os.listdir())                            # Lista os arquivos na pasta atual
+# print("Diretório de trabalho atual:", os.getcwd())                   
+# print("Arquivos na pasta:", os.listdir())                           
 
 
 # código de detecção de cores
