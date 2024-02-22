@@ -1,9 +1,6 @@
 from PIL import Image
 import os
 
-
-
-
 # código para buscar os arquivos no diretório
 
 # print("Diretório de trabalho atual:", os.getcwd())                   # Verifica o diretório de trabalho atual
