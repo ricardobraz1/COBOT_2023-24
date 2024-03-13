@@ -1,60 +1,49 @@
+import numpy as np
 import cv2
 
-# Carregar a imagem
-img = cv2.imread('Foto_1.jpg')
+# Define OS rangers da cor
+colors = {
+    "red": ((0, 100, 100), (10, 255, 255)),
+    "black": ((0, 0, 0), (180, 255, 255)),
+    "blue": ((100, 100, 0), (120, 255, 255))
+}
 
-# Em caso de utilização de WebCam
-#cap = cv2.VideoCapture(0)
-#ret, frame = cap.read()
+# Abre webcam
+cap = cv2.VideoCapture(0)
 
+while True:
+    # Captura o frame
+    ret, frame = cap.read()
 
-# Aplicar filtro de suavização
-img_blur = cv2.GaussianBlur(img, (7, 7), 0)
+    # Converte pra hsv
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-# Converter a imagem em HSV
-hsv = cv2.cvtColor(img_blur, cv2.COLOR_BGR2HSV)
+    # Loop pra detectar a cor
+    for color_name, color_range in colors.items():
+        # Create mask for the color
+        mask = cv2.inRange(hsv, color_range[0], color_range[1])
 
+        # encontrar os contornos
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-# Definir a faixa de valores HSV que representam a cor rosa
-rosa_inferior = (140, 50, 50)
-rosa_superior = (180, 255, 255)
+        # desenhar contornos
+        if contours:
+            for cnt in contours:
+                x, y, w, h = cv2.boundingRect(cnt)
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+                # calcular a coordenada y para posicionamento de texto 
+                text_y = 20 if len(colors) == 1 else 20 + (list(colors.keys()).index(color_name) * 30)
 
-# Aplicar uma mascara para segmentar a imagem,
-# mantendo apenas os pixels na faixa de valores de cor rosa
-mask = cv2.inRange(hsv, rosa_inferior, rosa_superior)
+                # mostra o nome da cor
+                cv2.putText(frame, color_name.upper(), (10, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
+    # tela de exibicao de cor
+    cv2.imshow("Color Detection", frame)
 
-# Aplicar operação de abertura para remover ruído
-kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    # sair do loop pressione q
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-
-# Encontrar os contornos dos objetos rosa na imagem segmentada
-contornos, _ = cv2.findContours(mask_open, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-# Definir tamanho mínimo para os contornos
-area_min_contorno = 150
-
-# Contar o número de contornos encontrados
-qtd_obj_rosa = 0
-cont = []
-for contorno in contornos:
-    if cv2.contourArea(contorno) > area_min_contorno:
-        qtd_obj_rosa += 1
-        cont.append(contorno)
-        
-res = cv2.bitwise_and(img,img, mask= mask_open)
-
-# Imprimir o número de objetos rosa encontrados
-print(f'Número de objetos rosa encontrados: {qtd_obj_rosa}')
-
-# Mostrar a imagem segmentada com os objetos rosa destacados
-cv2.drawContours(img, cont, -1, (0, 0, 255), 2)
-cv2.imshow('Objetos Rosa', img)
-#
-cv2.imshow('Mascara',mask_open)
-cv2.imshow('Resultado',res)
-#
-cv2.waitKey(0)
-cv2.destroyAllWindows()   
+cap.release()
+cv2.destroyAllWindows()
