@@ -1,17 +1,16 @@
 import rtde_control
-import rtde_io
-import time
 
-rtde_io_ = rtde_io.RTDEIOInterface("10.224.2.69")
 rtde_c = rtde_control.RTDEControlInterface("10.224.2.69")
 
+velocity = 0.5
+acceleration = 0.5
+blend_1 = 0.0
+blend_2 = 0.02
+blend_3 = 0.0
+path_pose1 = [-0.143, -0.435, 0.20, -0.001, 3.12, 0.04, velocity, acceleration, blend_1]
+path_pose2 = [-0.143, -0.51, 0.21, -0.001, 3.12, 0.04, velocity, acceleration, blend_2]
+path_pose3 = [-0.32, -0.61, 0.31, -0.001, 3.12, 0.04, velocity, acceleration, blend_3]
+path = [path_pose1, path_pose2, path_pose3]
 
-base = [-4.295280639325277, -1.2305423480323334, 2.051667038594381, -5.551773925820822, 1.538703441619873, -2.5057719389544886]
-
-a = [-5.34224516550173, -0.2929087442210694, 0.2897399107562464, 1.5457216936298828, 1.564157485961914, -1.9786604086505335]
-
-b = [-5.3434569279300135, -0.19018550336871343, 0.2919195334063929, 1.4932376581379394, 1.5670888423919678, -1.9786370436297815]
-
-# moviments sequency
-
-rtde_c.moveL(base)
+# Send a linear path with blending in between - (currently uses separate script)
+rtde_c.moveL(path)
