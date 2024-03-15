@@ -1,0 +1,13 @@
+import rtde_control
+import rtde_io
+import time
+
+rtde_io_ = rtde_io.RTDEIOInterface("10.224.2.69")
+rtde_c = rtde_control.RTDEControlInterface("10.224.2.69")
+
+base = [-4.036092583333151, -1.3568094980767746, 2.373448912297384, -2.5869633160033167, -1.568237606679098, -2.1496198813067835]
+a = [-3.4835787455188196, -0.29754896581683354, 0.7144029776202601, -5.202568670312399, 1.6166739463806152, -2.5057366530047815]
+
+rtde_c.moveJ(base)
+rtde_c.moveJ(a)
+rtde_c.moveJ(base)
